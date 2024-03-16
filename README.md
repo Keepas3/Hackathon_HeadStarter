@@ -20,10 +20,10 @@ import json
 import numpy as np
 
 Purpose:
-Audio1.txt is an example of a transcript taken by captions from a youtube video. https://www.youtube.com/watch?v=clMJ8BwCGa0
+Audio1.txt is an example of a transcript taken with captions from a YouTube video. https://www.youtube.com/watch?v=clMJ8BwCGa0
 
-Transcription.py uses transcription with importation of pytube from youtube. As well as importing YouTubeTranscriptApi and textBlob. 
-Pytube give access to youtube videos and lets you retrieve basic information about the video content.
+Transcription.py uses transcription with the importation of pytube from youtube. As well as importing YouTubeTranscriptApi and textBlob. 
+Pytube gives access to YouTube videos and lets you retrieve basic information about the video content.
 YoutubeTranscriptApi allows access to using youtube's captions or transcripts and allows the code to read it.
 textBlob is an api that processes the String data and allows the AI to analyze it.
 
@@ -34,3 +34,12 @@ First, the code chunks the transcript into timestamps for dialogue in the video.
 
 Chatbot.py reads the textfile from the user's input and summarizes the transcript into key points. 
 How it works is by using API connected to a natural language model
+
+
+
+Contributors:
+Vignesh S
+Bryan F
+Justin L
+Kevin Y
+
