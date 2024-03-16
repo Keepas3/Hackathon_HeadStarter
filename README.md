@@ -38,8 +38,8 @@ How it works is by using API connected to a natural language model
 
 
 Contributors:
-Vignesh S
-Bryan F
-Justin L
-Kevin Y
+Vignesh S,
+Bryan F,
+Justin L,
+Kevin Y,
 
