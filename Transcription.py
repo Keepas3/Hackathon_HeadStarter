@@ -1,6 +1,8 @@
-from pytube import YouTube
+from pytubefix import YouTube
 from youtube_transcript_api import YouTubeTranscriptApi
 from textblob import TextBlob
+import os
+from datetime import datetime
 #from gensim.summarization import summarize
 """import nltk
 nltk.download('punkt')
@@ -16,15 +18,20 @@ def seconds_to_minutes_seconds(seconds):
     seconds = int(seconds % 60)
     return f"{minutes:02d}:{seconds:02d}"
 
-def transcribe_and_save(video_url, output_file):
+def transcribe_and_save(video_url):
     try:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") 
+        project_directory = os.path.dirname(os.path.abspath(__file__)) 
+        output_file = os.path.join(project_directory, f"Audio_{timestamp}.txt")
         # Get YouTube video
+
+        print("Starting transcription process...")
         yt = YouTube(video_url)
-        
+        print(f"Fetched video: {yt.title}")
         # Get transcript
         transcripts = YouTubeTranscriptApi.get_transcript(yt.video_id)
-        
-        # Chunk transcript into timeframes
+        print("Transcript fetched successfully. Total transcripts: ", len(transcripts))        # Chunk transcript into timeframes
+
         timeframes = []
         for transcript in transcripts:
             start_time = transcript['start']
@@ -32,14 +39,15 @@ def transcribe_and_save(video_url, output_file):
             end_time = start_time + duration
             text = transcript['text']
             timeframes.append((start_time, end_time, text))
-        
+            print(f"Added transcript chunk: {text[:30]}...") # Print the first 30 characters of each chunk
         # Write timeframes to file
         with open(output_file, 'w', encoding='utf-8') as file:
             for start_time, end_time, text in timeframes:
                 start_time_formatted = seconds_to_minutes_seconds(start_time)
                 end_time_formatted = seconds_to_minutes_seconds(end_time)
                 file.write(f"{start_time_formatted} - {end_time_formatted}: {text}\n")
-        
+                print(f"Written to file: {start_time_formatted} - {end_time_formatted}: {text[:30]}...") # Debug written text
+
         print("Timeframes saved to:", output_file)
 
     except Exception as e:
@@ -88,12 +96,6 @@ print(summary)"""
         
 # Example usage
 video_url = "https://www.youtube.com/watch?v=clMJ8BwCGa0"
-#video_url = "https://www.youtube.com/watch?v=1qw5ITr3k9E"
-#video_url = input("Enter the YouTube video URL: ")
-output_file = input("Enter the output file path: ")
-#output_file = "C:\\Users\\fungb\\Notepad++\\Audio.txt"
-transcribe_and_save(video_url, output_file)
-inputfile2 = "C:\\Users\\fungb\\Notepad++\\Audio.txt"
-outputfile2 = "C:\\Users\\fungb\\Notepad++\\Audio2.txt"
+transcribe_and_save(video_url)
 #summarize_text(inputfile2, outputfile2)
 
