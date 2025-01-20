@@ -1,9 +1,7 @@
 import os
 from pytubefix import YouTube
 from youtube_transcript_api import YouTubeTranscriptApi
-from textblob import TextBlob
 from sentence_transformers import SentenceTransformer
-import openai
 import requests
 import json
 import numpy as np
@@ -13,46 +11,54 @@ openrouter_api_key = os.getenv('openrouter_api_key')
 
 # Load a Hugging Face model
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+#model = "openai/gpt-3.5-turbo"
 
 def seconds_to_minutes_seconds(seconds):
     minutes = int(seconds // 60)
     seconds = int(seconds % 60)
     return f"{minutes:02d}:{seconds:02d}"
-
 def transcribe_and_save(video_url):
     try:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") 
         project_directory = os.path.dirname(os.path.abspath(__file__)) 
-        output_file = os.path.join(project_directory, f"Summary_{timestamp}.txt")
         
         # Get YouTube video
         print("Starting transcription process...")
-        yt = YouTube(video_url)
+        yt = YouTube(video_url, use_po_token=True)
         print(f"Fetched video: {yt.title}")
+
+        output_file = os.path.join(project_directory, f"Summary_{yt.title}.txt")
         
         # Get transcript
-        transcripts = YouTubeTranscriptApi.get_transcript(yt.video_id)
+        transcripts = YouTubeTranscriptApi.get_transcript(yt.video_id, languages=['en'])
+        if not transcripts:
+            print("Error: No transcripts available for this video.")
+            return
         print("Transcript fetched successfully. Total transcripts: ", len(transcripts))        
+       # print(transcripts)
         
         # Combine transcript into a single string
-        full_transcript = " ".join([transcript['text'] for transcript in transcripts])
+        full_transcript = " ".join([transcript['text'] for transcript in transcripts if 'text' in transcript])      
+      #  print("Full Transcript:", full_transcript)
         
         # Prepare prompt for the OpenAI API
-        prompt = f"""Based on the context below. Given you are writing for an interviewer for a job position, write useful, concise, and short key points in your own words.
+        prompt = f""" Summarize the transcript
 
         CONTEXT:
         {full_transcript}
         """
-
+        
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
             headers={
                 "Authorization": f"Bearer {openrouter_api_key}",
+                "Content-Type": "application/json"
             },
             data=json.dumps({
-                "model": "google/gemma-7b-it:free",
+                "model": "google/gemini-2.0-flash-thinking-exp:free",
                 "messages": [
-                    {"role": "user", "content": prompt}
+                    {"role": "user", 
+                    "content": prompt}
                 ]
             })
         )
@@ -69,11 +75,14 @@ def transcribe_and_save(video_url):
                 print("Error: No content returned from the model.")
         else:
             print(f"Error: Failed to get a valid response from the model. Status code: {response.status_code}")
+            print("Response content:", response.content)
         
     except Exception as e:
         print("Error:", str(e))
 
+
+
 # Example usage
-video_url = "https://www.youtube.com/watch?v=clMJ8BwCGa0"
+video_url = input("Enter URL:")
 transcribe_and_save(video_url)
 print("Transcription process completed.")
