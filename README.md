@@ -6,6 +6,12 @@ Python
 Visual Studio Code
 HTML
 CSS
+Installation:
+1. Clone the Repository: ![image](https://github.com/user-attachments/assets/b9534ce7-8d97-4e62-9202-fce869eef237)
+
+2. Install all dependencies: ![image](https://github.com/user-attachments/assets/5f8890df-25c9-4bf5-8b4e-4edb2502c359)
+   
+3. Run the Application: ![image](https://github.com/user-attachments/assets/b75e2ad2-2e9d-4f98-8b4b-a3a95932909c)
 
 Imported:
 In transcription.py -
