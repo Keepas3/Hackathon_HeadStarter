@@ -11,8 +11,9 @@ These texts can be a summary of how you should tackle them.
 ### Prerequisites
 * Python JDK 11+
 * Environment variables configured:
+* Can be found by making an account and creating a key: [openrouter website](https://openrouter.ai/)
 ```bash
-   openrouter_api_key: your openrouter api_key ( can be found on [ openrouter website](https://openrouter.ai/))
+   openrouter_api_key: your openrouter api_key
    ```
 
 
@@ -58,6 +59,7 @@ Then the summary will be contained in a file of the source folder containing the
 
 ## Additional Resources:
 https://openrouter.ai/
+
 https://huggingface.co/
 
 
