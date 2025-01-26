@@ -1,1 +1,3 @@
 hackathon_venv/
+Summary/*
+!Summary/.gitkeep

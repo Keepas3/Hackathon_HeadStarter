@@ -6,6 +6,7 @@ import requests
 import json
 import numpy as np
 from datetime import datetime
+import re
 
 openrouter_api_key = os.getenv('openrouter_api_key')
 
@@ -13,21 +14,29 @@ openrouter_api_key = os.getenv('openrouter_api_key')
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 #model = "openai/gpt-3.5-turbo"
 
-def seconds_to_minutes_seconds(seconds):
-    minutes = int(seconds // 60)
-    seconds = int(seconds % 60)
-    return f"{minutes:02d}:{seconds:02d}"
+
+def clean_filename(filename):
+    return re.sub(r'[<>:"/\\|?*]', '_', filename)
+
+# Ensure the summary directory exists
+def check_directory_exists(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory) 
+
 def transcribe_and_save(video_url):
     try:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") 
         project_directory = os.path.dirname(os.path.abspath(__file__)) 
-        
+        summary_directory = os.path.join(project_directory, 'Summary')
+        check_directory_exists(summary_directory)
+
         # Get YouTube video
         print("Starting transcription process...")
         yt = YouTube(video_url, use_po_token=True)
         print(f"Fetched video: {yt.title}")
 
-        output_file = os.path.join(project_directory, f"Summary_{yt.title}.txt")
+        sanitized_title = clean_filename(yt.title)
+        output_file = os.path.join(summary_directory, f"Summary_{sanitized_title}.txt")        
         
         # Get transcript
         transcripts = YouTubeTranscriptApi.get_transcript(yt.video_id, languages=['en'])
@@ -42,7 +51,7 @@ def transcribe_and_save(video_url):
       #  print("Full Transcript:", full_transcript)
         
         # Prepare prompt for the OpenAI API
-        prompt = f""" Summarize the transcript
+        prompt = f""" Summarize the main points. Give examples if provided.
 
         CONTEXT:
         {full_transcript}
@@ -65,7 +74,12 @@ def transcribe_and_save(video_url):
 
         # Ensure the response is valid
         if response.status_code == 200:
-            llm_response = response.json().get("choices", [])[0].get('message', {}).get("content", None)
+            response_data = response.json()
+            choices = response_data.get("choices",[])
+            if len(choices) ==0:
+                print("Error: No choices returned from the model.")
+                return
+            llm_response = choices[0].get('message', {}).get("content",None)
             if llm_response:
                 # Write summary to file
                 with open(output_file, 'w', encoding='utf-8') as file:
@@ -83,6 +97,7 @@ def transcribe_and_save(video_url):
 
 
 # Example usage
-video_url = input("Enter URL:")
+video_url = input("Enter YouTube URL:")
 transcribe_and_save(video_url)
-print("Transcription process completed.")
+if transcribe_and_save: 
+    print("Transcription process completed.")
