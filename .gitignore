@@ -1,3 +1,5 @@
 hackathon_venv/
 Summary/*
 !Summary/.gitkeep
+openAI.py
+Transcribe.py

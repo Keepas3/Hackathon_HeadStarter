@@ -4,8 +4,6 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from sentence_transformers import SentenceTransformer
 import requests
 import json
-import numpy as np
-from datetime import datetime
 import re
 
 openrouter_api_key = os.getenv('openrouter_api_key')
@@ -25,7 +23,6 @@ def check_directory_exists(directory):
 
 def transcribe_and_save(video_url):
     try:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") 
         project_directory = os.path.dirname(os.path.abspath(__file__)) 
         summary_directory = os.path.join(project_directory, 'Summary')
         check_directory_exists(summary_directory)
