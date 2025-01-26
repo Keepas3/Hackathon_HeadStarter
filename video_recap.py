@@ -3,6 +3,7 @@ from pytubefix import YouTube
 from youtube_transcript_api import YouTubeTranscriptApi
 from sentence_transformers import SentenceTransformer
 import requests
+import numpy as np
 import json
 import re
 
@@ -40,7 +41,7 @@ def transcribe_and_save(video_url):
         if not transcripts:
             print("Error: No transcripts available for this video.")
             return
-        print("Transcript fetched successfully. Total transcripts: ", len(transcripts))        
+        print("Transcript fetched successfully. Total lines: ", len(transcripts))        
        # print(transcripts)
         
         # Combine transcript into a single string

@@ -30,7 +30,7 @@ These texts can be a summary of how you should tackle them.
    ```bash
    python -m venv myproject_env
    ```
-3. Download all dependencies
+3. Download all dependencies (can take up to 10+ minutes)
    ```bash
    pip -r requirements.txt
    ```
